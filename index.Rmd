@@ -14,7 +14,10 @@ knitr::opts_chunk$set(echo = T)
 ```
 ## Interactive maps in R with leaflet
 
-```{r echo = F}
+- slides: https://johnwilshire.github.io/environmental_computing_interactive_maps/
+- code: https://github.com/johnwilshire/environmental_computing_interactive_maps
+
+```{r}
 library(leaflet)
 leaflet() %>% 
   addTiles() %>% setView(151.2313, -33.9173, zoom = 16)
