@@ -56,7 +56,7 @@ leaflet() %>%
 <img src = "users.png" />
 
 ```{r, echo = F}
-leaflet(width = 250, height = 250) %>% addTiles()
+leaflet(width = 300, height = 300) %>% addTiles()
 ```
 
 </div>
@@ -98,9 +98,9 @@ leaflet(height = 400) %>%
   addMiniMap(zoomLevelFixed = 4) ## EASY!
 ```
 
-### Both!
+## Both!
 
-- We are going to save this map as a base layer for using later
+We are going to save this map as a base layer for later use
 
 ```{r}
 base <- leaflet(height = 400) %>% 
@@ -128,7 +128,7 @@ My eBird data
 library(dplyr, warn.conflicts = F)
 obs <- read.csv('MyEBirdData.csv') %>% group_by(Latitude, Longitude) %>% 
   summarise(total_species = n_distinct(Common.Name),
-            my_label = paste(total_species, 'species seen')) %>% ungroup()
+            my_label = paste(total_species, 'species seen'))
 
 obs %>% glimpse()
 ```
@@ -157,19 +157,17 @@ base %>%
 ```{r}
 pal <- colorNumeric("viridis", obs$total_species) # color function, maps values to colors
 base %>% 
-  addCircleMarkers(obs$Longitude, obs$Latitude,
-                   color = pal(obs$total_species),
+  addCircleMarkers(obs$Longitude, obs$Latitude, color = pal(obs$total_species),
                    label = obs$my_label)
 ```
 
 ## Legends
 
-- [legend docs](https://rstudio.github.io/leaflet/legends.html)
+[legend docs](https://rstudio.github.io/leaflet/legends.html)
 
 ```{r}
 base %>% 
-  addCircleMarkers(obs$Longitude, obs$Latitude,
-                   color = pal(obs$total_species),
+  addCircleMarkers(obs$Longitude, obs$Latitude, color = pal(obs$total_species),
                    label = paste(obs$total_species, 'species')) %>% 
   addLegend(pal = pal, values =  obs$total_species, position = "bottomleft")
 ```
@@ -177,13 +175,10 @@ base %>%
 ## Shapes, Polygons, Geojson
 
 ```{r}
-## adding random shapes
 randwick <- readLines('https://raw.githubusercontent.com/coreytcallaghan/urban_greenspaces/master/greenspaces/aus-nsw-randwick_environment_park/aus-nsw-randwick_environment_park.geojson', warn = F)
-
 base %>% 
   addCircles(151.25, -33.93,  radius = 100, color = 'red') %>% 
   addRectangles(151.24, -33.93 - 0.01,151.25 + 0.01,  -33.93 + 0.01, color = 'green') %>% 
-  addPolylines(151.22 + 0.01 * runif(10), -33.93 + 0.01 * runif(10), color = 'purple') %>% 
   addGeoJSON(randwick, color = 'teal')
 ```
 
@@ -201,7 +196,7 @@ gbif_map_url <- function (id) paste0(
     '&srs=EPSG:3857')
 ```
 
-![](swift.png)
+<img src="swift.png" height="300px" />
 
 ---
 
@@ -245,3 +240,7 @@ leaflet(height = 350) %>%
   addTiles(urlTemplate = gbif_map_url(2480052)) %>% 
   setView(151.2313, -33.9173, zoom = 8)
 ```
+
+## Questions
+
+- slides at https://twitter.com/johnhwilshire
