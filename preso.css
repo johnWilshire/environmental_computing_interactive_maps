@@ -1,0 +1,10 @@
+#leaflet_intro > * > *> img {
+  max-width: 300px;
+}
+
+h2 {
+  font-size: 30px;
+}
+slides > slide > hgroup + article {
+    margin-top: 30px;
+}
