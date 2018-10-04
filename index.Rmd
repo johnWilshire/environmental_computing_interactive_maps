@@ -6,16 +6,13 @@ output:
   ioslides_presentation:
     css: preso.css
     widescreen: false
-    smaller: true
+    smaller: false
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = T)
 ```
-## Interactive maps in R with leaflet
-
-- slides: https://johnwilshire.github.io/environmental_computing_interactive_maps/
-- code: https://github.com/johnwilshire/environmental_computing_interactive_maps
+## Interactive maps in R with leaflet [source code](https://github.com/johnwilshire/environmental_computing_interactive_maps)
 
 ```{r}
 library(leaflet)
@@ -55,6 +52,7 @@ leaflet() %>%
   - open source
   - similar to google maps
   - Leaflet is __not the tiles__
+  - Google and `?` are your friends!
   
 <img src = "users.png" />
 
@@ -106,30 +104,30 @@ leaflet(height = 400) %>%
 We are going to save this map as a base layer for later use
 
 ```{r}
-base <- leaflet(height = 400) %>% 
+(base <- leaflet(height =350) %>% 
   addTiles() %>%
   addScaleBar() %>%
-  addMiniMap(zoomLevelFixed = 4)
-base
+  addMiniMap(zoomLevelFixed = 4) %>% 
+  setView(151.2313, -33.9173, zoom = 10))
 ```
 
-## Markers
-
-- [marker docs](https://rstudio.github.io/leaflet/markers.html)
+## Markers [docs](https://rstudio.github.io/leaflet/markers.html)
 
 ```{r}
 base %>% 
   addMarkers(151.2313, -33.9173, label = 'UNSW!') %>% 
-  addCircleMarkers(151.233, -33.9173, radius = 30, opacity = 0.4, popup = 'UNSW', color = 'red')
+  addCircleMarkers(151.233, -33.9173, radius = 30,
+                   opacity = 0.4, popup = 'UNSW', color = 'red')
 ```
 
 ## eBird Example
 
-My eBird data
+My eBird data after 1 year 
 
 ```{r}
 library(dplyr, warn.conflicts = F)
-obs <- read.csv('MyEBirdData.csv') %>% group_by(Latitude, Longitude) %>% 
+obs <- read.csv('MyEBirdData.csv') %>% 
+  group_by(Latitude, Longitude) %>% 
   summarise(total_species = n_distinct(Common.Name),
             my_label = paste(total_species, 'species seen'))
 
@@ -144,6 +142,38 @@ base %>%
 ```
 
 
+## Colouring markers - [docs](https://rstudio.github.io/leaflet/colors.html)
+
+```{r}
+# color function, maps values to colors
+pal <- colorQuantile("RdYlBu", obs$total_species, n = 5) 
+base %>% 
+  addCircleMarkers(obs$Longitude, obs$Latitude,
+                   color = pal(obs$total_species),
+                   label = obs$my_label)
+```
+
+## Marker radius
+
+```{r}
+base %>% 
+  addCircleMarkers(obs$Longitude, obs$Latitude,
+                   color = pal(obs$total_species),
+                   label = obs$my_label,
+                   radius = obs$total_species)
+```
+
+
+## Legend - [docs](https://rstudio.github.io/leaflet/legends.html)
+
+```{r}
+base %>% 
+  addCircleMarkers(obs$Longitude, obs$Latitude, 
+                   color = pal(obs$total_species),
+                   label = obs$my_label) %>% 
+  addLegend(pal = pal, values =  obs$total_species, position = "bottomleft")
+```
+
 ## Clustering
 
 ```{r}
@@ -153,35 +183,14 @@ base %>%
                    clusterOptions = markerClusterOptions())
 ```
 
-## Colouring markers
-
-<!-- - [colouring docs](https://rstudio.github.io/leaflet/colors.html) -->
-
-```{r}
-pal <- colorNumeric("viridis", obs$total_species) # color function, maps values to colors
-base %>% 
-  addCircleMarkers(obs$Longitude, obs$Latitude, color = pal(obs$total_species),
-                   label = obs$my_label)
-```
-
-## Legends
-
-[legend docs](https://rstudio.github.io/leaflet/legends.html)
-
-```{r}
-base %>% 
-  addCircleMarkers(obs$Longitude, obs$Latitude, color = pal(obs$total_species),
-                   label = paste(obs$total_species, 'species')) %>% 
-  addLegend(pal = pal, values =  obs$total_species, position = "bottomleft")
-```
-
-## Shapes, Polygons, Geojson
+## Shapes, Polygons, Geojson - [docs](https://rstudio.github.io/leaflet/shapes.html)
 
 ```{r}
 randwick <- readLines('https://raw.githubusercontent.com/coreytcallaghan/urban_greenspaces/master/greenspaces/aus-nsw-randwick_environment_park/aus-nsw-randwick_environment_park.geojson', warn = F)
-base %>% 
+base %>% clearBounds() %>% 
   addCircles(151.25, -33.93,  radius = 100, color = 'red') %>% 
-  addRectangles(151.24, -33.93 - 0.01,151.25 + 0.01,  -33.93 + 0.01, color = 'green') %>% 
+  addRectangles(151.24, -33.93 - 0.01,151.25 + 0.01,  -33.93 + 0.01,
+                fillColor = "transparent") %>% 
   addGeoJSON(randwick, color = 'teal')
 ```
 
