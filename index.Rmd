@@ -14,7 +14,7 @@ knitr::opts_chunk$set(echo = T)
 ```
 ## Interactive maps in R with leaflet [source code](https://github.com/johnwilshire/environmental_computing_interactive_maps)
 
-```{r}
+```{r, echo=F}
 library(leaflet)
 leaflet() %>% 
   addTiles() %>% setView(151.2313, -33.9173, zoom = 16)
@@ -30,13 +30,15 @@ leaflet() %>%
   - label points without clutter!
   - websites, blogs
   - clustering
+  - base layers
   - shiny apps
   - packages: `leaflet`
+
 
 ### Static
 
   - publications
-  - .pdf, .word files
+  - .pdf, word files
   - not too many points
   - not too close together (labling)
   - still __really__ useful
