@@ -27,11 +27,11 @@ leaflet() %>%
 ### Interactive
 
   - nice supplementary materials!
-  -  supervisors
   - label points without clutter!
   - websites, blogs
+  - clustering
   - shiny apps
-
+  - packages: `leaflet`
 
 ### Static
 
@@ -40,6 +40,7 @@ leaflet() %>%
   - not too many points
   - not too close together (labling)
   - still __really__ useful
+  - packages: `ggmap`, `cartography`, `sf`
   
 </div>
 
@@ -122,7 +123,7 @@ base %>%
 
 ## eBird Example
 
-My eBird data after 1 year 
+My eBird data after 1 year, you can use the built in `quakes` dataset 
 
 ```{r}
 library(dplyr, warn.conflicts = F)
@@ -185,6 +186,8 @@ base %>%
 
 ## Shapes, Polygons, Geojson - [docs](https://rstudio.github.io/leaflet/shapes.html)
 
+Movement data etc.
+
 ```{r}
 randwick <- readLines('https://raw.githubusercontent.com/coreytcallaghan/urban_greenspaces/master/greenspaces/aus-nsw-randwick_environment_park/aus-nsw-randwick_environment_park.geojson', warn = F)
 base %>% clearBounds() %>% 
@@ -221,7 +224,6 @@ base %>%
 ## Base layers 
 
 - Open Street map tile servers (https://wiki.openstreetmap.org/wiki/Tile_servers)
-- `addProviderTiles(providers$Stamen.Toner)`
 
 ```{r}
 leaflet(height=350) %>% 
